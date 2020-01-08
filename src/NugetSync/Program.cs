@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace NugetSync
 {
@@ -12,14 +11,33 @@ namespace NugetSync
     {
         static void Main(string[] args)
         {
-            var configurationBuilder = new ConfigurationBuilder();
-            var configuration = configurationBuilder.AddCommandLine(args).Build();
-            var key = configuration["k"];
-            var source = configuration["s"];
-            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(source))
+            var key = string.Empty;
+            var source = string.Empty;
+
+            try
+            {
+                for (int j = 0; j < args.Length; ++j)
+                {
+                    if (args[j] == "-k")
+                    {
+                        key = args[j + 1];
+                    }
+
+                    if (args[j] == "-s")
+                    {
+                        source = args[j + 1];
+                    }
+                }
+            }
+            catch
             {
                 Console.WriteLine("Please use command like: nuget-sync -k {apiKey} -s {source}");
                 return;
+            }
+
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(source))
+            {
+                Console.WriteLine("Please use command like: nuget-sync -k {apiKey} -s {source}");
             }
 
             var currentUserFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
