@@ -9,8 +9,16 @@ namespace NugetSync
 {
     class Program
     {
+        private const string HelperInfo = "Please use command like: nuget-sync -k {apiKey} -s {source}";
+
         static void Main(string[] args)
         {
+            if (args.Length < 4)
+            {
+                Console.WriteLine(HelperInfo);
+                return;
+            }
+
             var key = string.Empty;
             var source = string.Empty;
 
@@ -31,13 +39,14 @@ namespace NugetSync
             }
             catch
             {
-                Console.WriteLine("Please use command like: nuget-sync -k {apiKey} -s {source}");
+                Console.WriteLine(HelperInfo);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(source))
             {
-                Console.WriteLine("Please use command like: nuget-sync -k {apiKey} -s {source}");
+                Console.WriteLine(HelperInfo);
+                return;
             }
 
             var currentUserFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
@@ -64,11 +73,13 @@ namespace NugetSync
             }
 
             var i = 0;
+            var targets = new List<string>();
             foreach (var package in packages)
             {
                 i++;
                 var file = Path.GetFileName(package);
                 var targetPath = Path.Combine(targetDirectory.FullName, file);
+                targets.Add(targetPath);
                 if (!File.Exists(targetPath))
                 {
                     File.Copy(package, targetPath);
@@ -76,7 +87,7 @@ namespace NugetSync
                 }
             }
 
-            Parallel.ForEach(packages, new ParallelOptions
+            Parallel.ForEach(targets, new ParallelOptions
             {
                 MaxDegreeOfParallelism = Environment.ProcessorCount / 2
             }, (package) =>

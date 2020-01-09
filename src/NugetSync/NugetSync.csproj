@@ -3,7 +3,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.0.2</Version>
+        <Version>0.0.3</Version>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>nuget-sync</ToolCommandName>
         <PackageId>nuget-sync</PackageId>
